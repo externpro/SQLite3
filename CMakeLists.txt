@@ -7,6 +7,25 @@ project(SQLite3
 include(GNUInstallDirs)
 
 #------------------------------------------------------------------------------
+# externpro
+include(flags OPTIONAL)
+
+if(DEFINED SQLITE_VER)
+  if(NOT SQLITE_VER STREQUAL PROJECT_VERSION)
+    message(AUTHOR_WARNING "version passed in (${SQLITE_VER}) doesn't match project VERSION (${PROJECT_VERSION})")
+  endif()
+  set(verEmbed _${PROJECT_VERSION})
+endif()
+
+if(DEFINED XP_NAMESPACE)
+  set(nameSpace ${XP_NAMESPACE})
+  set(cfgDir ${CMAKE_INSTALL_LIBDIR}/)
+else()
+  set(nameSpace SQLite)
+  set(debugPostfix DEBUG_POSTFIX d)
+endif()
+
+#------------------------------------------------------------------------------
 # build options and optional modules:
 option(SQLITE_ENABLE_DBSTAT_VTAB    "enables dbstat virtual table"                    OFF)
 option(SQLITE_ENABLE_FTS3           "enables full text searches version 3"            OFF)
@@ -31,11 +50,11 @@ endif()
 # SQLite3 as static library:
 add_library(${PROJECT_NAME} STATIC sqlite3.c)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_NAME   sqlite3
+    OUTPUT_NAME   sqlite3${verEmbed}
     PUBLIC_HEADER sqlite3.h
-    DEBUG_POSTFIX d
+    ${debugPostfix}
     )
-target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_definitions(${PROJECT_NAME} PUBLIC # inject user's options
     $<BUILD_INTERFACE:
         $<$<BOOL:${SQLITE_ENABLE_DBSTAT_VTAB}>:SQLITE_ENABLE_DBSTAT_VTAB>
@@ -83,14 +102,14 @@ endif()
 #------------------------------------------------------------------------------
 configure_file(sqlite3_config.h.in ${CMAKE_BINARY_DIR}/sqlite3_config.h)
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config${verEmbed}
     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
-install(EXPORT  ${PROJECT_NAME}Config
-    NAMESPACE   SQLite::
-    DESTINATION cmake
+install(EXPORT  ${PROJECT_NAME}Config${verEmbed}
+    NAMESPACE   ${nameSpace}::
+    DESTINATION ${cfgDir}cmake
     )
 install(FILES
     ${CMAKE_BINARY_DIR}/sqlite3_config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

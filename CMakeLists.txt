@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(SQLite3
-    VERSION   3.31.1
+    VERSION   3.34.1
     LANGUAGES C
     )
 
@@ -32,7 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     PUBLIC_HEADER sqlite3.h
     DEBUG_POSTFIX d
     )
-target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_definitions(${PROJECT_NAME} PUBLIC # inject user's options
     $<BUILD_INTERFACE:
         $<$<BOOL:${SQLITE_ENABLE_DBSTAT_VTAB}>:SQLITE_ENABLE_DBSTAT_VTAB>

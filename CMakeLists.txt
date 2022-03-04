@@ -98,6 +98,13 @@ elseif(WIN32 AND ${CMAKE_SIZEOF_VOID_P} LESS 8) # this is a 32bit windows
             )
     endif()
 endif()
+if(SQLITE_ENABLE_MATH_FUNCTIONS)
+  include(CheckLibraryExists)
+  check_library_exists(m sin "" HAVE_LIB_M)
+  if(HAVE_LIB_M)
+    target_link_libraries(${PROJECT_NAME} PRIVATE m)
+  endif()
+endif()
 
 #------------------------------------------------------------------------------
 configure_file(sqlite3_config.h.in ${CMAKE_BINARY_DIR}/sqlite3_config.h)
@@ -139,7 +146,7 @@ if(BUILD_SHELL)
             set(${flag} "${${flag}}" CACHE STRING "msvc flags" FORCE)
         endforeach()
     endif()
-    install(TARGETS shell_app
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    install(TARGETS shell_app EXPORT ${PROJECT_NAME}Config${verEmbed}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Release
         )
 endif()

@@ -9,20 +9,12 @@ include(GNUInstallDirs)
 #------------------------------------------------------------------------------
 # externpro
 include(flags OPTIONAL)
-
-if(DEFINED SQLITE_VER)
-  if(NOT SQLITE_VER STREQUAL PROJECT_VERSION)
-    message(AUTHOR_WARNING "version passed in (${SQLITE_VER}) doesn't match project VERSION (${PROJECT_VERSION})")
-  endif()
-  set(verEmbed _${PROJECT_VERSION})
-endif()
-
-if(DEFINED XP_NAMESPACE)
-  set(nameSpace ${XP_NAMESPACE})
-  set(cfgDir ${CMAKE_INSTALL_LIBDIR}/)
-else()
-  set(nameSpace SQLite)
+if(NOT DEFINED XP_NAMESPACE)
+  set(XP_NAMESPACE SQLite)
   set(debugPostfix DEBUG_POSTFIX d)
+endif()
+if(NOT DEFINED XP_INSTALL_CMAKEDIR)
+  set(XP_INSTALL_CMAKEDIR cmake)
 endif()
 
 #------------------------------------------------------------------------------
@@ -50,7 +42,7 @@ endif()
 # SQLite3 as static library:
 add_library(${PROJECT_NAME} STATIC sqlite3.c)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_NAME   sqlite3${verEmbed}
+    OUTPUT_NAME   sqlite3
     PUBLIC_HEADER sqlite3.h
     ${debugPostfix}
     )
@@ -109,14 +101,14 @@ endif()
 #------------------------------------------------------------------------------
 configure_file(sqlite3_config.h.in ${CMAKE_BINARY_DIR}/sqlite3_config.h)
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config${verEmbed}
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
-install(EXPORT  ${PROJECT_NAME}Config${verEmbed}
-    NAMESPACE   ${nameSpace}::
-    DESTINATION ${cfgDir}cmake
+install(EXPORT  ${PROJECT_NAME}Config
+    NAMESPACE   ${XP_NAMESPACE}::
+    DESTINATION ${XP_INSTALL_CMAKEDIR}
     )
 install(FILES
     ${CMAKE_BINARY_DIR}/sqlite3_config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -146,7 +138,7 @@ if(BUILD_SHELL)
             set(${flag} "${${flag}}" CACHE STRING "msvc flags" FORCE)
         endforeach()
     endif()
-    install(TARGETS shell_app EXPORT ${PROJECT_NAME}Config${verEmbed}
+    install(TARGETS shell_app EXPORT ${PROJECT_NAME}Config
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} CONFIGURATIONS Release
         )
 endif()

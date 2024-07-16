@@ -1,6 +1,14 @@
 # ignore all subdirectories
 **/
 
+# Exclude specific subdirectories/dotfiles to track
+!.devcontainer
+
+# externpro
+.env
+_bld*/
+docker-compose.override.yml
+
 # YouCompleteMe
 .ycm_extra_conf.*
 

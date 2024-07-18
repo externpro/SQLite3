@@ -19,6 +19,7 @@ if(NOT DEFINED XP_NAMESPACE)
 else()
   set(XP_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
 endif()
+xpPackageDevel(LIBRARIES ${XP_NAMESPACE}::${PROJECT_NAME} TARGETS_FILE ${PROJECT_NAME}Config)
 
 #------------------------------------------------------------------------------
 # build options and optional modules:

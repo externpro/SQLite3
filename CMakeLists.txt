@@ -128,7 +128,7 @@ if(BUILD_SHELL)
     if(UNIX)
         if(CMAKE_BUILD_TYPE STREQUAL Release)
             add_custom_command(TARGET shell_app POST_BUILD
-                COMMAND ${CMAKE_STRIP} sqlite3
+                COMMAND ${CMAKE_STRIP} $<TARGET_FILE:shell_app>
                 )
         endif()
     elseif(MSVC)

@@ -19,6 +19,11 @@ if(NOT DEFINED XP_NAMESPACE)
 else()
   set(XP_INSTALL_CMAKEDIR ${CMAKE_INSTALL_DATADIR}/cmake)
 endif()
+string(JOIN "\n" EXT1
+  "set(THREAD_PREFER_PTHREAD_FLAG ON)"
+  "find_package(Threads REQUIRED) # depends on Threads::Threads"
+  ""
+  )
 xpPackageDevel(LIBRARIES ${XP_NAMESPACE}::${PROJECT_NAME} TARGETS_FILE ${PROJECT_NAME}Config)
 
 #------------------------------------------------------------------------------

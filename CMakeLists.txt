@@ -16,7 +16,7 @@ if(DEFINED XP_NAMESPACE)
       BASE ${CMAKE_PROJECT_VERSION} XPDIFF "patch" FIND_THREADS
       WEB "https://www.sqlite.org/index.html 'SQLite website'" UPSTREAM "github.com/azadkuh/sqlite-amalgamation"
       DESC "C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine"
-      LICENSE "[public domain](https://www.sqlite.org/copyright.html 'open-source, not open-contribution')"
+      LICENSE "[SQLite](https://www.sqlite.org/copyright.html 'public domain dedication - no license required')"
       )
     set(CMAKE_NAMESPACE ${XP_NAMESPACE})
 else()

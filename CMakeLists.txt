@@ -1,29 +1,10 @@
-cmake_minimum_required(VERSION 3.31)
-set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES .devcontainer/cmake/xproinc.cmake)
+cmake_minimum_required(VERSION 4.3)
 project(SQLite3
     VERSION   3.38.2
     LANGUAGES C
     )
 
 include(GNUInstallDirs)
-
-#------------------------------------------------------------------------------
-# externpro
-set(targetsFile ${PROJECT_NAME}Config)
-if(DEFINED XP_NAMESPACE)
-    xpExternPackage(NAMESPACE ${XP_NAMESPACE} ALIAS_NAMESPACE SQLite
-      TARGETS_FILE ${targetsFile} LIBRARIES ${PROJECT_NAME}
-      BASE ${CMAKE_PROJECT_VERSION} XPDIFF "patch" FIND_THREADS
-      WEB "https://www.sqlite.org/index.html 'SQLite website'" UPSTREAM "github.com/azadkuh/sqlite-amalgamation"
-      DESC "C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine"
-      LICENSE "[SQLite](https://www.sqlite.org/copyright.html 'public domain dedication - no license required')"
-      )
-    set(CMAKE_NAMESPACE ${XP_NAMESPACE})
-else()
-    set(debugPostfix DEBUG_POSTFIX d)
-    set(CMAKE_NAMESPACE SQLite)
-    set(CMAKE_INSTALL_CMAKEDIR cmake)
-endif()
 
 #------------------------------------------------------------------------------
 # build options and optional modules:
@@ -54,6 +35,10 @@ if(SQLITE_ENABLE_COLUMN_METADATA AND SQLITE_OMIT_DECLTYPE)
 endif()
 
 #------------------------------------------------------------------------------
+
+if(NOT COMMAND xpExternPackage)
+    set(debugPostfix DEBUG_POSTFIX d)
+endif()
 
 # SQLite3 as static library:
 add_library(${PROJECT_NAME} STATIC sqlite3.c)
@@ -113,6 +98,24 @@ if(SQLITE_ENABLE_MATH_FUNCTIONS)
     if(HAVE_LIBM)
         target_link_libraries(${PROJECT_NAME} PRIVATE m)
     endif()
+endif()
+
+#------------------------------------------------------------------------------
+# externpro
+set(targetsFile ${PROJECT_NAME}-targets)
+if(COMMAND xpExternPackage)
+    xpExternPackage(TARGETS_FILE ${targetsFile}
+      FIND_XPRO_CMAKE CREATE_ALIASES ALIAS_NAMESPACE SQLite
+      EXE shell_app LIBRARIES ${PROJECT_NAME} DEFAULT_TARGETS ${PROJECT_NAME}
+      BASE ${CMAKE_PROJECT_VERSION} XPDIFF "patch"
+      WEB "https://www.sqlite.org/index.html 'SQLite website'" UPSTREAM "github.com/azadkuh/sqlite-amalgamation"
+      DESC "C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine"
+      LICENSE "[SQLite](https://www.sqlite.org/copyright.html 'public domain dedication - no license required')"
+      )
+    set(CMAKE_NAMESPACE ${PROJECT_NAME})
+else()
+    set(CMAKE_NAMESPACE SQLite)
+    set(CMAKE_INSTALL_CMAKEDIR cmake)
 endif()
 
 #------------------------------------------------------------------------------

@@ -104,8 +104,7 @@ endif()
 # externpro
 set(targetsFile ${PROJECT_NAME}-targets)
 if(COMMAND xpExternPackage)
-    xpExternPackage(TARGETS_FILE ${targetsFile}
-      FIND_XPRO_CMAKE CREATE_ALIASES ALIAS_NAMESPACE SQLite
+    xpExternPackage(TARGETS_FILE ${targetsFile} ALIAS_NAMESPACE SQLite
       EXE shell_app LIBRARIES ${PROJECT_NAME} DEFAULT_TARGETS ${PROJECT_NAME}
       BASE ${CMAKE_PROJECT_VERSION} XPDIFF "patch"
       WEB "https://www.sqlite.org/index.html 'SQLite website'" UPSTREAM "github.com/azadkuh/sqlite-amalgamation"
